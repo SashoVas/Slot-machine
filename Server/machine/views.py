@@ -10,16 +10,29 @@ from machine.serializers import UserSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from machine import slot_machine_settings
 
 # Create your views here.
+
+
+@api_view(["GET"])
+def get_rules(request):
+    return Response(
+        {
+            "number_to_symbol_mapping": slot_machine_settings.NUMBERS_TO_SYMBOLS_MAPPING,
+            "paytable": slot_machine_settings.PAYTABLE,
+            "winning_lines": slot_machine_settings.WINNING_LINES,
+            "wild_symbol": slot_machine_settings.WILD_SYMBOL,
+        }
+    )
 
 
 @api_view(["GET"])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def test(request):
-    res = {"a": 1}
-    return Response(res)
+    serialiser = UserSerializer(request.user)
+    return Response(serialiser.data)
 
 
 @api_view(["POST"])
