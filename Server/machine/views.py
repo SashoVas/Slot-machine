@@ -12,6 +12,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from machine import slot_machine_settings
 from machine.slot_machine import Slot_machine
+from statistics import stdev
 # Create your views here.
 
 
@@ -68,19 +69,78 @@ def register_user(request):
         return Response(serializer.data)
     return Response(serializer.errors)
 
+
+@api_view(["GET"])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_user_history(request):
+    rolls = Roll.objects.filter(user=request.user)
+    serializer = RollSerializer(rolls, many=True)
+    return Response(serializer.data)
+
+@api_view(["GET"])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_user_statistics(request):
+    rolls = Roll.objects.filter(user=request.user)
+    total_amoounth_won=sum([roll.result for roll in rolls])
+    total_amount_bet=sum([roll.cost for roll in rolls])
+    max_amount_won=max([roll.result for roll in rolls])
+    max_amount_bet=max([roll.cost for roll in rolls])
+    total_spins=len(rolls)
+    profit=total_amoounth_won-total_amount_bet
+    amount_won_per_spin=total_amoounth_won/total_spins
+    average_bet=total_amount_bet/total_spins
+    std_won=stdev([roll.result for roll in rolls])
+    std_bet=stdev([roll.cost for roll in rolls])
+
+    return Response(data={
+        "total_spins":total_spins,
+        "total_amoounth_won":total_amoounth_won,
+        "max_amount_won":max_amount_won,
+        "amount_won_per_spin":amount_won_per_spin,
+        "std_won":std_won,
+        "total_amount_bet":total_amount_bet,
+        "max_amount_bet":max_amount_bet,
+        "average_bet":average_bet,
+        "std_bet":std_bet,
+        "profit":profit,
+    })
+
+@api_view(["GET"])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_user_roll(request,pk):
+    roll = get_object_or_404(Roll, pk=pk)
+    if  not roll.user == request.user:
+        return Response({"error": "You don't have permission to see this roll"})
+    serializer = RollSerializer(roll)
+    return Response(serializer.data)
+
+
+@api_view(["POST"])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def add_money(request):
+    if float(request.data["amount"]) <= 0:
+        return Response({"error": "Invalid amount"})
+    request.user.balance += float(request.data["amount"])
+    request.user.save()
+    return Response({"success": "Successfully added money."})
+
+
 @api_view(["POST"])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def spin_machine(request):
-    #if request.data["cost"] > request.user.balance:
-    #    return Response({"error": "Not enough money"})
-    #if request.data["cost"] <= 0:
-    #    return Response({"error": "Invalid bet"})
+    if float(request.data["cost"]) > request.user.balance:
+        return Response({"error": "Not enough money"})
+    if float(request.data["cost"]) <= 0:
+        return Response({"error": "Invalid bet"})
 
     slot_machine=Slot_machine()
     multyplier, roll_board, winning_lines=slot_machine.roll_machine()
     board_info={"roll_board":roll_board,"winning_lines":winning_lines}
-    print(board_info)
 
     data = {
         'user':request.user.pk,
@@ -92,7 +152,8 @@ def spin_machine(request):
 
     if serializer.is_valid():
         serializer.save()
-        #request.user.balance += roll.result
-        #request.user.save()
+        
+        request.user.balance += float(request.data["cost"])*multyplier - float(request.data["cost"])
+        request.user.save()
         return Response(serializer.data)
     return Response(serializer.errors)
