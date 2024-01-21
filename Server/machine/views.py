@@ -5,13 +5,13 @@ from rest_framework.decorators import (
     permission_classes,
     authentication_classes,
 )
-from machine.models import User
-from machine.serializers import UserSerializer
+from machine.models import User,Roll
+from machine.serializers import UserSerializer,RollSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from machine import slot_machine_settings
-
+from machine.slot_machine import Slot_machine
 # Create your views here.
 
 
@@ -65,5 +65,34 @@ def register_user(request):
         user = User.objects.get(username=request.data["username"])
         user.set_password(request.data["password"])
         user.save()
+        return Response(serializer.data)
+    return Response(serializer.errors)
+
+@api_view(["POST"])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def spin_machine(request):
+    #if request.data["cost"] > request.user.balance:
+    #    return Response({"error": "Not enough money"})
+    #if request.data["cost"] <= 0:
+    #    return Response({"error": "Invalid bet"})
+
+    slot_machine=Slot_machine()
+    multyplier, roll_board, winning_lines=slot_machine.roll_machine()
+    board_info={"roll_board":roll_board,"winning_lines":winning_lines}
+    print(board_info)
+
+    data = {
+        'user':request.user.pk,
+        'cost':request.data["cost"],
+        'board_info':board_info,
+        'winings_multyplier':multyplier,
+    }
+    serializer=RollSerializer(data=data)
+
+    if serializer.is_valid():
+        serializer.save()
+        #request.user.balance += roll.result
+        #request.user.save()
         return Response(serializer.data)
     return Response(serializer.errors)

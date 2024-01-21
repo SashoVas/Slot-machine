@@ -8,12 +8,18 @@ class Slot_machine:
     def __init__(self, is_rigged=False, rigged_reels_symbols=None):
         self.is_rigged = is_rigged
         self.rigged_reels_symbols = rigged_reels_symbols
-        self.reels = [
-            Reel(slot_machine_settings.BASE_REELS_SYMBOLS[i],
-                is_rigged=is_rigged,
-                rigged_reels_symbols=rigged_reels_symbols[i])
-            for i in range(Slot_machine.REELS_NUMBER)
-        ]
+        if self.is_rigged:
+            self.reels = [
+                Reel(slot_machine_settings.BASE_REELS_SYMBOLS[i],
+                    is_rigged=is_rigged,
+                    rigged_reels_symbols=rigged_reels_symbols[i])
+                for i in range(Slot_machine.REELS_NUMBER)
+            ]
+        else:
+            self.reels = [
+                Reel(slot_machine_settings.BASE_REELS_SYMBOLS[i])
+                for i in range(Slot_machine.REELS_NUMBER)
+            ]
 
     def calculate_streek_for_one_line(self, line):\
         #TODO: calculate the edge case where there are 3 or more wilds in a row
@@ -28,7 +34,7 @@ class Slot_machine:
             streek += 1
             if reel.result[line_row]!=slot_machine_settings.WILD_SYMBOL:
                 current_symbol = reel.result[line_row]
-        streak-=1
+        streek-=1
         
         return streek, current_symbol
 
