@@ -4,9 +4,9 @@ NUMBERS_TO_SYMBOLS_MAPPING = {
     1: "Cherry",
     2: "Lemon",
     3: "Orange",
-    4: "Watermelons",
-    5: "Plums",
-    6: "Grapes ",
+    4: "Watermelon",
+    5: "Plum",
+    6: "Grape",
     7: "Seven",
     8: "Star",
 }
