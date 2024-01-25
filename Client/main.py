@@ -1,12 +1,15 @@
 import pygame
+import settings
+from slot_machine import Slot_machine
 
 class Game:
     def __init__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode((1260, 700))
+        self.screen = pygame.display.set_mode((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT))
         pygame.display.set_caption("Slot Machine")
         self.clock = pygame.time.Clock()
-        self.bg=pygame.image.load('Client/graphics/backgrounds/bg1.png')
+        self.bg=pygame.image.load(settings.BACKGROUND_IMAGE_PATH)
+        self.machine=Slot_machine()
 
 
     def run(self):
@@ -17,9 +20,10 @@ class Game:
                     pygame.quit()
                     quit()
 
-            self.screen.blit(self.bg,(0,0))
             pygame.display.update()
-            self.clock.tick(60)
+            self.screen.blit(self.bg,(0,0))
+            self.machine.update()
+            self.clock.tick(settings.FPS)
 
 if __name__ == "__main__":
     game = Game()
