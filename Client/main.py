@@ -1,5 +1,6 @@
 import pygame
 import settings
+from user import User
 from slot_machine import Slot_machine
 
 class Game:
@@ -10,11 +11,12 @@ class Game:
         self.clock = pygame.time.Clock()
         self.bg=pygame.image.load(settings.BACKGROUND_IMAGE_PATH)
         self.user_interface_bg=pygame.image.load(settings.USER_INTERFACE_BACKGROUND_IMAGE_PATH)
-        self.machine=Slot_machine(self.user_interface_bg)
+        self.user= User("nqkoi","nqkoi")
+        #self.user.deposit(1000)
+        self.machine=Slot_machine(self.user_interface_bg,self.user)
 
 
     def run(self):
-        #self.machine.spin()
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

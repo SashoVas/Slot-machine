@@ -126,7 +126,7 @@ def add_money(request):
         return Response({"error": "Invalid amount"})
     request.user.balance += float(request.data["amount"])
     request.user.save()
-    return Response({"success": "Successfully added money."})
+    return Response({"balance": request.user.balance})
 
 
 @api_view(["POST"])
