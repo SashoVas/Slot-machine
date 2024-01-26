@@ -1,5 +1,7 @@
 BACKGROUND_IMAGE_PATH = "Client/graphics/backgrounds/bg2.png"
 USER_INTERFACE_BACKGROUND_IMAGE_PATH = "Client/graphics/backgrounds/bg3.png"
+SPIN_START_SOUND_PATH = "Client/audio/rollstart.mp3"
+SPIN_END_SOUND_PATH = "Client/audio/rollend.mp3"
 FPS=60
 USER_INFO_ENDPOINT_URL="http://127.0.0.1:8000/machine/user"
 SPIN_REQUST_ENDPOINT_URL="http://127.0.0.1:8000/machine/roll"
@@ -14,7 +16,7 @@ WIDTH_OFFSET=18
 HEIGHT_OFFSET=4
 START_WIDTH=9
 START_HEIGHT=5
-SPIN_SPEED=40
+SPIN_SPEED=50
 ANIMATION_SYMBOL_SPAWN_HEIGHT=-195
 IMAGE_PATHS = {
     1: "Client/graphics/symbols/chery.png",

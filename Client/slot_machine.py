@@ -12,6 +12,7 @@ class Slot_machine:
         self.result_of_spin=0
         self.user_interface_bg=user_interface_bg
         self.user=user
+        self.start_spin_sound=pygame.mixer.Sound(settings.SPIN_START_SOUND_PATH)
         self.initialize_reels()
 
 
@@ -32,7 +33,7 @@ class Slot_machine:
     def check_input_for_spin(self):
         keys=pygame.key.get_pressed()
         if keys[pygame.K_SPACE] and not any([reel.is_spinning for reel in self.reels_list]):
-            self.spin()
+            self.spin(100)
 
 
     def vizualize_winnings(self):
@@ -47,23 +48,25 @@ class Slot_machine:
 
 
 
-    def get_spin_result(self):
+    def get_spin_result(self,amount):
         response=requests.post(settings.SPIN_REQUST_ENDPOINT_URL
                                ,headers={"Authorization":self.user.get_authorization_header()}
-                               ,data={"cost":100})
+                               ,data={"cost":amount})
         
         json_data=response.json()
         return json_data["board_info"],json_data["winings_multyplier"], json_data["result"]
 
 
-    def spin(self):
-        if self.user.balance < 100:
+    def spin(self,amount):
+        if self.user.balance < amount:
             return
-        self.user.balance -= 100
-        board_info,winings_multyplier, result = self.get_spin_result()
+        self.start_spin_sound.play()
+
+        self.user.balance -= amount
+        board_info,winings_multyplier, result = self.get_spin_result(amount)
         self.result_of_spin=result
         board=board_info["roll_board"]
         self.winning_lines=board_info["winning_lines"]
         self.to_vizualize_winnings=True
         for current_reel,reel in enumerate(self.reels_list):
-            reel.spin(board[current_reel],current_reel*2+1)
+            reel.spin(board[current_reel],current_reel*4+1)

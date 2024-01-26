@@ -18,6 +18,7 @@ class Reel:
         self.y=y
         self.is_spinning=False
         self.is_board_full=False
+        self.reel_end_sound=pygame.mixer.Sound(settings.SPIN_END_SOUND_PATH)
         for i in range(3):
             symbol_to_spawn=random.randint(1,8)
             self.symbol_list.add(Symbol(self.x,self.y + i*(settings.IMAGE_HEIGHT+settings.HEIGHT_OFFSET), settings.IMAGE_PATHS[symbol_to_spawn]))
@@ -49,8 +50,10 @@ class Reel:
             return
 
         if not len(self.animation_sprites) and len( self.symbol_list)==3:
+            self.reel_end_sound.play()
             self.is_spinning=False
             self.re_center_symbols()
+
             return
         
         for symbol in self.symbol_list:
