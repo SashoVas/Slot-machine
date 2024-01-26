@@ -31,7 +31,7 @@ def get_rules(request):
 @api_view(["GET"])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def test(request):
+def user_info(request):
     serialiser = UserSerializer(request.user)
     return Response(serialiser.data)
 
