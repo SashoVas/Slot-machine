@@ -13,6 +13,7 @@ class Game:
 
 
     def run(self):
+        self.machine.spin()
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

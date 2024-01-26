@@ -10,6 +10,8 @@ WIDTH_OFFSET=18
 HEIGHT_OFFSET=4
 START_WIDTH=9
 START_HEIGHT=5
+SPIN_SPEED=20
+ANIMATION_SYMBOL_SPAWN_HEIGHT=-195
 IMAGE_PATHS = {
     1: "Client/graphics/symbols/chery.png",
     2: "Client/graphics/symbols/lemmon.png",
