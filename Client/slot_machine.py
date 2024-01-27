@@ -13,6 +13,7 @@ class Slot_machine:
         self.user_interface_bg=user_interface_bg
         self.user=user
         self.start_spin_sound=pygame.mixer.Sound(settings.SPIN_START_SOUND_PATH)
+        self.last_win_animation_time=0
         self.initialize_reels()
 
 
@@ -36,10 +37,25 @@ class Slot_machine:
             self.spin(100)
 
 
+    def animate_winnings(self):
+        if pygame.time.get_ticks() - self.last_win_animation_time > 1000 and not any([reel.is_spinning for reel in self.reels_list]):
+            self.last_win_animation_time=pygame.time.get_ticks()
+            for reel in self.reels_list:
+                reel.remove_animations()
+            if len(self.winning_lines):
+                for reel_num,symbol in enumerate(self.winning_lines[-1]):
+                    self.reels_list[reel_num].animate_win(symbol)
+                current = self.winning_lines.pop()
+                self.winning_lines.insert(0,current)
+
+
     def vizualize_winnings(self):
         if self.to_vizualize_winnings and not any([reel.is_spinning for reel in self.reels_list]):
             self.to_vizualize_winnings=False
             self.user.balance+=self.result_of_spin
+
+        self.animate_winnings()
+
         font=pygame.font.Font('freesansbold.ttf', 32)
         img=font.render(f"balance:{self.user.balance}",True,(255,255,255))
 

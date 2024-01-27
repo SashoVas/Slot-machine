@@ -5,10 +5,45 @@ import settings
 class Symbol(pygame.sprite.Sprite):
     def __init__(self, x, y, image_path):
         super().__init__()
-        self.image = pygame.image.load(image_path)
+        self.image_path=image_path
+        self.image = pygame.image.load(image_path).convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        
+        self.width=190
+        self.height=190
+        self.alpha=255
+        self.fade_in=False
+        self.fade_out=False
+
+
+    def remove_animations(self):
+        if self.fade_in or self.fade_out:
+            self.image=pygame.image.load(self.image_path).convert_alpha()
+
+        self.fade_in=False
+        self.fade_out=False
+        self.alpha=255
+        self.width=190
+        self.height=190
+
+
+
+    def update(self):
+
+        if self.fade_in:
+            if self.width<200:
+                self.width=200
+                self.height=200
+                self.image=pygame.transform.scale(self.image,(self.width,self.height))
+        elif self.fade_out:
+            if self.alpha>115:
+                self.alpha=115
+                self.image.set_alpha(self.alpha)
+    
+            
+
 
 class Reel:
     def __init__(self, x, y):
@@ -23,9 +58,26 @@ class Reel:
             symbol_to_spawn=random.randint(1,8)
             self.symbol_list.add(Symbol(self.x,self.y + i*(settings.IMAGE_HEIGHT+settings.HEIGHT_OFFSET), settings.IMAGE_PATHS[symbol_to_spawn]))
 
+
+    def animate_win(self,symbol):
+        for current in range(len(self.symbol_list)):
+            if current == symbol:
+                self.symbol_list.sprites()[current].fade_in=True
+            else:
+                self.symbol_list.sprites()[current].fade_out=True
+        
+
+    def remove_animations(self):
+        for symbol in self.symbol_list:
+            symbol.remove_animations()
+
+
     def update(self, display_surface):
         self.animate()
+        for symbol in self.symbol_list:
+            symbol.update()
         self.symbol_list.draw(display_surface)
+
 
     def re_center_symbols(self):
         for current, symbol in enumerate( self.symbol_list):
