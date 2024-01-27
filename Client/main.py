@@ -26,7 +26,6 @@ class Game:
 
             pygame.display.update()
             self.screen.blit(self.bg,(0,0))
-            #self.screen.blit(self.user_interface_bg,(0,settings.SCREEN_HEIGHT))
             self.machine.update()
             self.clock.tick(settings.FPS)
 

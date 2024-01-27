@@ -13,7 +13,11 @@ class Slot_machine:
         self.user_interface_bg=user_interface_bg
         self.user=user
         self.start_spin_sound=pygame.mixer.Sound(settings.SPIN_START_SOUND_PATH)
+        self.win_sound=pygame.mixer.Sound(settings.WIN_SOUND_PATH)
+        self.big_win_sound=pygame.mixer.Sound(settings.BIG_WIN_SOUND_PATH)
+        self.omega_win_sound=pygame.mixer.Sound(settings.OMEGA_WIN_SOUND_PATH)
         self.last_win_animation_time=0
+        self.winnings_multyplier=0
         self.initialize_reels()
 
 
@@ -53,6 +57,13 @@ class Slot_machine:
         if self.to_vizualize_winnings and not any([reel.is_spinning for reel in self.reels_list]):
             self.to_vizualize_winnings=False
             self.user.balance+=self.result_of_spin
+            if self.result_of_spin:
+                if self.winnings_multyplier > settings.OMEGA_WIN_MULTIPLIER:
+                    self.omega_win_sound.play()
+                elif self.winnings_multyplier > settings.BIG_WIN_MULTIPLIER:
+                    self.big_win_sound.play()
+                else:
+                    self.win_sound.play()
 
         self.animate_winnings()
 
@@ -81,6 +92,7 @@ class Slot_machine:
         self.user.balance -= amount
         board_info,winings_multyplier, result = self.get_spin_result(amount)
         self.result_of_spin=result
+        self.winnings_multyplier=winings_multyplier 
         board=board_info["roll_board"]
         self.winning_lines=board_info["winning_lines"]
         self.to_vizualize_winnings=True
