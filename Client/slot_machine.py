@@ -79,7 +79,7 @@ class Slot_machine:
         self.animate_winnings()
 
         font=pygame.font.Font('freesansbold.ttf', 32)
-        img=font.render(f"balance:{self.user.balance}",True,(255,255,255))
+        img=font.render(f"balance:{round(self.user.balance,2)}",True,(255,255,255))
         
         self.display_surface.blit(self.user_interface_bg,(0,settings.SCREEN_HEIGHT))
         self.display_surface.blit(img,(30,settings.SCREEN_HEIGHT+30))
@@ -102,6 +102,7 @@ class Slot_machine:
 
 
     def spin(self,amount):
+        amount=amount
         if self.user.balance < amount:
             return
         
@@ -114,7 +115,7 @@ class Slot_machine:
         self.user.balance -= amount
         board_info,winings_multyplier, result = self.get_spin_result(amount)
         self.result_of_spin=result
-        self.winnings_multyplier=winings_multyplier 
+        self.winnings_multyplier=winings_multyplier
         board=board_info["roll_board"]
         self.winning_lines=board_info["winning_lines"]
         self.to_vizualize_winnings=True

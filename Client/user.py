@@ -4,7 +4,7 @@ import settings
 class User:
     def __init__(self,bet_amount=100):
         self.is_loged_in=False
-        self.bet_amount=bet_amount
+        self.bet_amount = bet_amount
 
     def is_logged(self):
         return self.is_loged_in
@@ -18,7 +18,7 @@ class User:
         if  response.status_code != 200:
             return False
         self.authorization_header ="Token "+ json_data["token"]
-        self.balance = json_data["user"]["balance"]
+        self.balance =json_data["user"]["balance"]
         self.name = json_data["user"]["username"]
         self.is_loged_in=True
         return True
@@ -29,9 +29,14 @@ class User:
 
         return response.status_code == 200
 
+
     def get_authorization_header(self):
         return self.authorization_header
     
+
+    def change_bet_amount(self,amount):
+        self.bet_amount=amount
+
 
     def deposit(self,amount):
         if self.is_loged_in==False:

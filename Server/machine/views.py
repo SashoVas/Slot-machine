@@ -131,7 +131,7 @@ def get_user_roll(request,pk):
 def add_money(request):
     if float(request.data["amount"]) <= 0:
         return Response({"error": "Invalid amount"})
-    request.user.balance += float(request.data["amount"])
+    request.user.balance +=float( request.data["amount"])
     request.user.save()
     return Response({"balance": request.user.balance})
 
