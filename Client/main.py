@@ -13,7 +13,7 @@ class Game:
         self.bg=pygame.image.load(settings.BACKGROUND_IMAGE_PATH)
         self.user_interface_bg=pygame.image.load(settings.USER_INTERFACE_BACKGROUND_IMAGE_PATH)
         self.user= User()
-        self.user.login("nqkoi","nqkoi")
+        #self.user.login("nqkoi","nqkoi")
         #self.user.deposit(1000)
         self.machine=Slot_machine(self.user_interface_bg,self.user)
 
@@ -54,9 +54,12 @@ class Game:
             self.machine.update()
             self.clock.tick(settings.FPS)
     
+
     def run_menu(self):
         running=True
         while running:
+            self.screen.fill((0,0,0))
+
             mouse_pos = pygame.mouse.get_pos()
 
 
@@ -81,12 +84,12 @@ class Game:
                     if play_button.checkForInput(mouse_pos):
                         running=False
                         self.run_slot_machine()
-                    if login_button.checkForInput(mouse_pos):
+                    if login_button.checkForInput(mouse_pos) and not self.user.is_logged():
                         running=False
-                        print("login")
-                    if register_button.checkForInput(mouse_pos):
+                        self.run_login()
+                    if register_button.checkForInput(mouse_pos) and not self.user.is_logged():
                         running=False
-                        print("register")
+                        self.run_register()
                     if quit_button.checkForInput(mouse_pos):
                         pygame.quit()
                         quit()
@@ -95,8 +98,130 @@ class Game:
             self.clock.tick(settings.FPS)
 
 
+    def run_login(self):
+        running =True
+        username=""
+        password=""
+        username_redy=False
+        while running:
+            self.screen.fill((0,0,0))
+
+            mouse_pos = pygame.mouse.get_pos()
+            
+            login_button = Button(image=pygame.image.load(settings.AUTOSPIN_BUTTON_BACKGRAOUND_PATH), pos=(380, 650), 
+                                text_input="Login",
+                                font=pygame.font.Font(settings.FONT_PATH, 20), base_color="#d7fcd4", hovering_color="White")
+            go_back_button = Button(image=pygame.image.load(settings.AUTOSPIN_BUTTON_BACKGRAOUND_PATH), pos=(550, 650), 
+                                text_input="Go back",
+                                font=pygame.font.Font(settings.FONT_PATH, 20), base_color="#d7fcd4", hovering_color="White")
+            font=pygame.font.Font('freesansbold.ttf', 32)
+            username_input=font.render(f"username:{username}",True,(255,255,255))
+            password_input=font.render(f"password:{password}",True,(255,255,255))
+            self.screen.blit(username_input,(30,200))
+            self.screen.blit(password_input,(30,300))
+
+            for button in [login_button, go_back_button]:
+                button.changeColor(mouse_pos)
+                button.update(self.screen)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+                if event.type == pygame.TEXTINPUT:
+                    if username_redy:
+                        password+=event.text
+                    else:
+                        username+=event.text
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_BACKSPACE:
+                        if username_redy:
+                            password=password[:-1]
+                        else:
+                            username=username[:-1]
+                    if event.key == pygame.K_RETURN:
+                        if username_redy:
+                            if self.user.login(username,password):
+                                running=False
+                                self.run_menu()
+                        else:
+                            username_redy=True
+                    if event.key == pygame.K_TAB:
+                        username_redy=not username_redy
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if login_button.checkForInput(mouse_pos):
+                        if self.user.login(username,password):
+                            running=False
+                            self.run_menu()
+                    if go_back_button.checkForInput(mouse_pos):
+                        running=False
+                        self.run_menu()
+
+            pygame.display.update()
+            self.clock.tick(settings.FPS)
 
 
+    def run_register(self):
+        running =True
+        username=""
+        password=""
+        username_redy=False
+        while running:
+            self.screen.fill((0,0,0))
+
+            mouse_pos = pygame.mouse.get_pos()
+            
+            register_button = Button(image=pygame.image.load(settings.AUTOSPIN_BUTTON_BACKGRAOUND_PATH), pos=(380, 650), 
+                                text_input="Register",
+                                font=pygame.font.Font(settings.FONT_PATH, 20), base_color="#d7fcd4", hovering_color="White")
+            go_back_button = Button(image=pygame.image.load(settings.AUTOSPIN_BUTTON_BACKGRAOUND_PATH), pos=(550, 650), 
+                                text_input="Go back",
+                                font=pygame.font.Font(settings.FONT_PATH, 20), base_color="#d7fcd4", hovering_color="White")
+            font=pygame.font.Font('freesansbold.ttf', 32)
+            username_input=font.render(f"username:{username}",True,(255,255,255))
+            password_input=font.render(f"password:{password}",True,(255,255,255))
+            self.screen.blit(username_input,(30,200))
+            self.screen.blit(password_input,(30,300))
+
+            for button in [register_button, go_back_button]:
+                button.changeColor(mouse_pos)
+                button.update(self.screen)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+                if event.type == pygame.TEXTINPUT:
+                    if username_redy:
+                        password+=event.text
+                    else:
+                        username+=event.text
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_BACKSPACE:
+                        if username_redy:
+                            password=password[:-1]
+                        else:
+                            username=username[:-1]
+                    if event.key == pygame.K_RETURN:
+                        if username_redy:
+                            if self.user.register(username,password):
+                                running=False
+                                self.run_login()
+                        else:
+                            username_redy=True
+                    if event.key == pygame.K_TAB:
+                        username_redy=not username_redy
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if register_button.checkForInput(mouse_pos):
+                        if self.user.register(username,password):
+                            running=False
+                            self.run_login()
+                    if go_back_button.checkForInput(mouse_pos):
+                        running=False
+                        self.run_menu()
+
+            pygame.display.update()
+            self.clock.tick(settings.FPS)
 
 if __name__ == "__main__":
     game = Game()

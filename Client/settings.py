@@ -12,6 +12,7 @@ FPS=60
 USER_INFO_ENDPOINT_URL="http://127.0.0.1:8000/machine/user"
 SPIN_REQUST_ENDPOINT_URL="http://127.0.0.1:8000/machine/roll"
 LOGIN_ENDPOINT_URL="http://127.0.0.1:8000/machine/login"
+REGISTER_ENDPOINT_URL="http://127.0.0.1:8000/machine/register"
 DEPOSIT_ENDPOINT_URL="http://127.0.0.1:8000/machine/addMoney"
 SCREEN_WIDTH=1066
 SCREEN_HEIGHT=600

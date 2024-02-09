@@ -5,7 +5,7 @@ from json import loads
 # Create your models here.
 class User(AbstractUser):
     balance = models.FloatField(default=0)
-    email = models.EmailField(unique=True, blank=False, null=False)
+    email = models.EmailField(unique=False, blank=True, null=True)
 
 
 class Roll(models.Model):
