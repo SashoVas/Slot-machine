@@ -2,8 +2,9 @@ import requests
 import settings
 
 class User:
-    def __init__(self):
+    def __init__(self,bet_amount=100):
         self.is_loged_in=False
+        self.bet_amount=bet_amount
 
 
     def login(self,username,password):

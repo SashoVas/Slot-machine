@@ -39,24 +39,16 @@ class Slot_machine:
 
     def auto(self):
         if not any([reel.is_spinning for reel in self.reels_list]):
-            self.spin(100)
+            self.spin(self.user.bet_amount)
 
 
     def update(self):
         if self.is_auto_spin:
             self.auto()
-        else:
-            self.check_input_for_spin()
 
         for reel in self.reels_list:
             reel.update(self.display_surface)
         self.vizualize_winnings()
-
-
-    def check_input_for_spin(self):
-        keys=pygame.key.get_pressed()
-        if keys[pygame.K_SPACE] and not any([reel.is_spinning for reel in self.reels_list]):
-            self.spin(100)
 
 
     def animate_winnings(self):
@@ -111,6 +103,9 @@ class Slot_machine:
 
     def spin(self,amount):
         if self.user.balance < amount:
+            return
+        
+        if any([reel.is_spinning for reel in self.reels_list]):
             return
         
         self.visualize_multipliyer=False

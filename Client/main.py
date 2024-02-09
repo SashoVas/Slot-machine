@@ -21,12 +21,19 @@ class Game:
     def run_slot_machine(self):
         running=True
         while running:
+
             mouse_pos = pygame.mouse.get_pos()
             auto_spin_button = Button(image=pygame.image.load(settings.AUTOSPIN_BUTTON_BACKGRAOUND_PATH), pos=(950, 650), 
-                                text_input="autospin",
+                                text_input="Autospin",
                                 font=pygame.font.Font(settings.FONT_PATH, 20), base_color="#d7fcd4", hovering_color="White")
-            auto_spin_button.changeColor(mouse_pos)
-            auto_spin_button.update(self.screen)
+            
+            spin_button = Button(image=pygame.image.load(settings.AUTOSPIN_BUTTON_BACKGRAOUND_PATH), pos=(780, 650), 
+                                text_input="Spin",
+                                font=pygame.font.Font(settings.FONT_PATH, 20), base_color="#d7fcd4", hovering_color="White")
+
+            for button in [spin_button, auto_spin_button]:
+                button.changeColor(mouse_pos)
+                button.update(self.screen)
 
 
             for event in pygame.event.get():
@@ -34,8 +41,13 @@ class Game:
                     pygame.quit()
                     quit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
+                    if spin_button.checkForInput(mouse_pos):
+                        self.machine.spin(self.user.bet_amount)
                     if auto_spin_button.checkForInput(mouse_pos):
                         self.machine.auto_spin()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        self.machine.spin(self.user.bet_amount)
 
             pygame.display.update()
             self.screen.blit(self.bg,(0,0))
