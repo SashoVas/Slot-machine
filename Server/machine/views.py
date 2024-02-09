@@ -87,13 +87,17 @@ def get_user_statistics(request):
     total_amount_bet=sum([roll.cost for roll in rolls])
     max_amount_won=max([roll.result for roll in rolls])
     max_amount_bet=max([roll.cost for roll in rolls])
+    max_multiplyer = max([roll.winings_multyplier for roll in rolls])
     total_spins=len(rolls)
+    average_multiplyer=sum([roll.winings_multyplier for roll in rolls])/total_spins
+
     profit=total_amoounth_won-total_amount_bet
     amount_won_per_spin=total_amoounth_won/total_spins
     average_bet=total_amount_bet/total_spins
+
     std_won=stdev([roll.result for roll in rolls])
     std_bet=stdev([roll.cost for roll in rolls])
-
+    std_multiplyer=stdev([roll.winings_multyplier for roll in rolls])
     return Response(data={
         "total_spins":total_spins,
         "total_amoounth_won":total_amoounth_won,
@@ -105,6 +109,9 @@ def get_user_statistics(request):
         "average_bet":average_bet,
         "std_bet":std_bet,
         "profit":profit,
+        "max_multiplyer":max_multiplyer,
+        "average_multiplyer":average_multiplyer,
+        "std_multiplyer":std_multiplyer,
     })
 
 @api_view(["GET"])

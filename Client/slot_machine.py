@@ -19,6 +19,7 @@ class Slot_machine:
         self.last_win_animation_time=0
         self.winnings_multyplier=0
         self.initialize_reels()
+        self.visualize_multipliyer=False
 
 
     def initialize_reels(self):
@@ -26,6 +27,10 @@ class Slot_machine:
             width = i*(settings.IMAGE_WIDTH + settings.WIDTH_OFFSET) + settings.START_WIDTH
             height=settings.START_HEIGHT
             self.reels_list.append(Reel(width, height))
+
+    def auto_spin(self):
+        if not any([reel.is_spinning for reel in self.reels_list]):
+            self.spin(100)
 
 
     def update(self):
@@ -58,6 +63,7 @@ class Slot_machine:
             self.to_vizualize_winnings=False
             self.user.balance+=self.result_of_spin
             if self.result_of_spin:
+                self.visualize_multipliyer=True
                 if self.winnings_multyplier > settings.OMEGA_WIN_MULTIPLIER:
                     self.omega_win_sound.play()
                 elif self.winnings_multyplier > settings.BIG_WIN_MULTIPLIER:
@@ -69,9 +75,15 @@ class Slot_machine:
 
         font=pygame.font.Font('freesansbold.ttf', 32)
         img=font.render(f"balance:{self.user.balance}",True,(255,255,255))
-
+        
         self.display_surface.blit(self.user_interface_bg,(0,settings.SCREEN_HEIGHT))
         self.display_surface.blit(img,(30,settings.SCREEN_HEIGHT+30))
+        if self.visualize_multipliyer:
+            font2=pygame.font.Font('freesansbold.ttf', 50)
+
+            img2=font2.render(f"WIN: X {self.winnings_multyplier}",True,(255,255,255))
+            self.display_surface.blit(img2,(400,settings.SCREEN_HEIGHT+15))
+
 
 
 
@@ -87,6 +99,8 @@ class Slot_machine:
     def spin(self,amount):
         if self.user.balance < amount:
             return
+        
+        self.visualize_multipliyer=False
         self.start_spin_sound.play()
 
         self.user.balance -= amount
