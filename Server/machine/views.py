@@ -40,7 +40,7 @@ def user_info(request):
 def login_user(request):
     user = get_object_or_404(User, username=request.data["username"])
     if not user.check_password(request.data["password"]):
-        return Response({"error": "Wrong password"})
+        return Response({"error": "Wrong password"},status=400)
     token, created = Token.objects.get_or_create(user=user)
     serializer = UserSerializer(user)
     return Response(
@@ -67,7 +67,7 @@ def register_user(request):
         user.set_password(request.data["password"])
         user.save()
         return Response(serializer.data)
-    return Response(serializer.errors)
+    return Response(serializer.errors,status=400)
 
 
 @api_view(["GET"])

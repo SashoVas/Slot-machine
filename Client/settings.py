@@ -7,6 +7,7 @@ BIG_WIN_SOUND_PATH="Client/audio/big_win_sound.mp3"
 OMEGA_WIN_SOUND_PATH="Client/audio/azis_omega_win_sound.mp3"
 FONT_PATH="Client/fonts/font.ttf"
 BUTTON_BACKGRAOUND_PATH="Client/graphics/buttons/button_bg.png"
+AUTOSPIN_BUTTON_BACKGRAOUND_PATH="Client/graphics/buttons/autospin_bg.png"
 FPS=60
 USER_INFO_ENDPOINT_URL="http://127.0.0.1:8000/machine/user"
 SPIN_REQUST_ENDPOINT_URL="http://127.0.0.1:8000/machine/roll"

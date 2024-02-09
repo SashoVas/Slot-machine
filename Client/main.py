@@ -12,7 +12,8 @@ class Game:
         self.clock = pygame.time.Clock()
         self.bg=pygame.image.load(settings.BACKGROUND_IMAGE_PATH)
         self.user_interface_bg=pygame.image.load(settings.USER_INTERFACE_BACKGROUND_IMAGE_PATH)
-        self.user= User("nqkoi","nqkoi")
+        self.user= User()
+        self.user.login("nqkoi","nqkoi")
         #self.user.deposit(1000)
         self.machine=Slot_machine(self.user_interface_bg,self.user)
 
@@ -20,12 +21,22 @@ class Game:
     def run_slot_machine(self):
         running=True
         while running:
+            mouse_pos = pygame.mouse.get_pos()
+            auto_spin_button = Button(image=pygame.image.load(settings.AUTOSPIN_BUTTON_BACKGRAOUND_PATH), pos=(950, 650), 
+                                text_input="autospin",
+                                font=pygame.font.Font(settings.FONT_PATH, 20), base_color="#d7fcd4", hovering_color="White")
+            auto_spin_button.changeColor(mouse_pos)
+            auto_spin_button.update(self.screen)
+
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if auto_spin_button.checkForInput(mouse_pos):
+                        self.machine.auto_spin()
 
-            #self.machine.auto_spin()
             pygame.display.update()
             self.screen.blit(self.bg,(0,0))
             self.machine.update()
@@ -34,7 +45,7 @@ class Game:
     def run_menu(self):
         running=True
         while running:
-            MENU_MOUSE_POS = pygame.mouse.get_pos()
+            mouse_pos = pygame.mouse.get_pos()
 
 
             play_button = Button(image=pygame.image.load(settings.BUTTON_BACKGRAOUND_PATH), pos=(540, 150), 
@@ -47,7 +58,7 @@ class Game:
                     text_input="Quit", font=pygame.font.Font(settings.FONT_PATH, 75), base_color="#d7fcd4", hovering_color="White")
 
             for button in [play_button, register_button, login_button, quit_button]:
-                button.changeColor(MENU_MOUSE_POS)
+                button.changeColor(mouse_pos)
                 button.update(self.screen)
 
             for event in pygame.event.get():
@@ -55,16 +66,16 @@ class Game:
                     pygame.quit()
                     quit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if play_button.checkForInput(MENU_MOUSE_POS):
+                    if play_button.checkForInput(mouse_pos):
                         running=False
                         self.run_slot_machine()
-                    if login_button.checkForInput(MENU_MOUSE_POS):
+                    if login_button.checkForInput(mouse_pos):
                         running=False
                         print("login")
-                    if register_button.checkForInput(MENU_MOUSE_POS):
+                    if register_button.checkForInput(mouse_pos):
                         running=False
                         print("register")
-                    if quit_button.checkForInput(MENU_MOUSE_POS):
+                    if quit_button.checkForInput(mouse_pos):
                         pygame.quit()
                         quit()
 

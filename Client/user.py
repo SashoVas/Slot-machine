@@ -2,17 +2,27 @@ import requests
 import settings
 
 class User:
-    def __init__(self, username, password):
-        self.initialize_user_data(username,password)
+    def __init__(self):
+        self.is_loged_in=False
 
 
-    def initialize_user_data(self,username,password):
+    def login(self,username,password):
         response=requests.post(settings.LOGIN_ENDPOINT_URL,data={"username":username,"password":password})
         json_data=response.json()
+        if  response.status_code != 200:
+            return False
         self.authorization_header ="Token "+ json_data["token"]
         self.balance = json_data["user"]["balance"]
         self.name = json_data["user"]["username"]
+        self.is_loged_in=True
+        return True
 
+
+    def register(self,username,email,password):
+        response=requests.post(settings.REGISTER_ENDPOINT_URL,data={"username":username,"email":email,"password":password})
+        json_data=response.json()
+
+        return json_data.status_code == 200
 
     def get_authorization_header(self):
         return self.authorization_header

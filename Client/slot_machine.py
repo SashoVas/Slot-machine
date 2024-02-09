@@ -20,6 +20,15 @@ class Slot_machine:
         self.winnings_multyplier=0
         self.initialize_reels()
         self.visualize_multipliyer=False
+        self.is_auto_spin=False
+
+
+    def is_auto_spining(self):
+        return self.auto_spin
+
+
+    def auto_spin(self):
+        self.is_auto_spin = not self.is_auto_spin
 
 
     def initialize_reels(self):
@@ -28,13 +37,17 @@ class Slot_machine:
             height=settings.START_HEIGHT
             self.reels_list.append(Reel(width, height))
 
-    def auto_spin(self):
+    def auto(self):
         if not any([reel.is_spinning for reel in self.reels_list]):
             self.spin(100)
 
 
     def update(self):
-        self.check_input_for_spin()
+        if self.is_auto_spin:
+            self.auto()
+        else:
+            self.check_input_for_spin()
+
         for reel in self.reels_list:
             reel.update(self.display_surface)
         self.vizualize_winnings()
