@@ -14,7 +14,8 @@ class Roll(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     board_info = models.JSONField(null=False, default='dict')
     winings_multyplier = models.FloatField(default=0)
-
+    scatter_multiplier = models.FloatField(default=0)
+    
     @property
     def result(self):
         return self.cost * self.winings_multyplier

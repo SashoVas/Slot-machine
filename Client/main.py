@@ -13,8 +13,6 @@ class Game:
         self.bg=pygame.image.load(settings.BACKGROUND_IMAGE_PATH)
         self.user_interface_bg=pygame.image.load(settings.USER_INTERFACE_BACKGROUND_IMAGE_PATH)
         self.user= User()
-        #self.user.login("nqkoi","nqkoi")
-        #self.user.deposit(1000)
         self.machine=Slot_machine(self.user_interface_bg,self.user)
 
 

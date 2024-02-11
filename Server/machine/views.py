@@ -146,14 +146,17 @@ def spin_machine(request):
         return Response({"error": "Invalid bet"})
 
     slot_machine=Slot_machine()
-    multyplier, roll_board, winning_lines=slot_machine.roll_machine()
-    board_info={"roll_board":roll_board,"winning_lines":winning_lines}
+    multyplier, roll_board, winning_lines, scater_multyplier, scater_positions=slot_machine.roll_machine()
+    board_info={"roll_board":roll_board,
+                "winning_lines":winning_lines,
+                "scater_positions":scater_positions}
 
     data = {
         'user':request.user.pk,
         'cost':request.data["cost"],
         'board_info':board_info,
         'winings_multyplier':multyplier,
+        'scatter_multiplier':scater_multyplier,
     }
     serializer=RollSerializer(data=data)
 
