@@ -10,8 +10,8 @@ class Game:
         self.screen = pygame.display.set_mode((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT+settings.USER_INTERVACE_ADDIONAL_HEIGHT))
         pygame.display.set_caption("Slot Machine")
         self.clock = pygame.time.Clock()
-        self.bg=pygame.image.load(settings.BACKGROUND_IMAGE_PATH)
-        self.user_interface_bg=pygame.image.load(settings.USER_INTERFACE_BACKGROUND_IMAGE_PATH)
+        self.bg=pygame.image.load(settings.BACKGROUND_IMAGE_PATH).convert_alpha()
+        self.user_interface_bg=pygame.image.load(settings.USER_INTERFACE_BACKGROUND_IMAGE_PATH).convert_alpha()
         self.user= User()
         self.machine=Slot_machine(self.user_interface_bg,self.user)
 
@@ -21,11 +21,13 @@ class Game:
         while running:
 
             mouse_pos = pygame.mouse.get_pos()
-            auto_spin_button = Button(image=pygame.image.load(settings.AUTOSPIN_BUTTON_BACKGRAOUND_PATH), pos=(950, 650), 
+            auto_spin_button = Button(image=pygame.image.load(settings.AUTOSPIN_BUTTON_BACKGRAOUND_PATH).convert_alpha(),
+                                pos=(950, 650), 
                                 text_input="Autospin",
                                 font=pygame.font.Font(settings.FONT_PATH, 20), base_color="#d7fcd4", hovering_color="White")
             
-            spin_button = Button(image=pygame.image.load(settings.AUTOSPIN_BUTTON_BACKGRAOUND_PATH), pos=(780, 650), 
+            spin_button = Button(image=pygame.image.load(settings.AUTOSPIN_BUTTON_BACKGRAOUND_PATH).convert_alpha(),
+                                pos=(780, 650), 
                                 text_input="Spin",
                                 font=pygame.font.Font(settings.FONT_PATH, 20), base_color="#d7fcd4", hovering_color="White")
 
@@ -46,6 +48,9 @@ class Game:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         self.machine.spin(self.user.bet_amount)
+                    if event.key == pygame.K_ESCAPE:
+                        running=False
+                        self.run_menu()
 
             pygame.display.update()
             self.screen.blit(self.bg,(0,0))
@@ -61,15 +66,19 @@ class Game:
             mouse_pos = pygame.mouse.get_pos()
 
 
-            play_button = Button(image=pygame.image.load(settings.BUTTON_BACKGRAOUND_PATH), pos=(540, 150), 
+            play_button = Button(image=pygame.image.load(settings.BUTTON_BACKGRAOUND_PATH).convert_alpha(),
+                                pos=(540, 150), 
                                 text_input="Play", font=pygame.font.Font(settings.FONT_PATH, 75), base_color="#d7fcd4", hovering_color="White")
-            register_statistics_button = Button(image=pygame.image.load(settings.BUTTON_BACKGRAOUND_PATH), pos=(540, 300), 
+            register_statistics_button = Button(image=pygame.image.load(settings.BUTTON_BACKGRAOUND_PATH).convert_alpha(),
+                                pos=(540, 300), 
                                 text_input="Register" if not self.user.is_logged() else "Statistics",
                                 font=pygame.font.Font(settings.FONT_PATH, 75), base_color="#d7fcd4", hovering_color="White")
-            login_options_button = Button(image=pygame.image.load(settings.BUTTON_BACKGRAOUND_PATH),pos=(540, 450), 
+            login_options_button = Button(image=pygame.image.load(settings.BUTTON_BACKGRAOUND_PATH).convert_alpha(),
+                                pos=(540, 450), 
                                 text_input="Login" if not self.user.is_logged() else "Options",
                                 font=pygame.font.Font(settings.FONT_PATH, 75), base_color="#d7fcd4", hovering_color="White")
-            quit_button = Button(image=pygame.image.load(settings.BUTTON_BACKGRAOUND_PATH),pos=(540, 600), 
+            quit_button = Button(image=pygame.image.load(settings.BUTTON_BACKGRAOUND_PATH).convert_alpha(),
+                    pos=(540, 600), 
                     text_input="Quit", font=pygame.font.Font(settings.FONT_PATH, 75), base_color="#d7fcd4", hovering_color="White")
 
             for button in [play_button, register_statistics_button, login_options_button, quit_button]:
@@ -111,10 +120,12 @@ class Game:
 
             mouse_pos = pygame.mouse.get_pos()
             
-            login_button = Button(image=pygame.image.load(settings.AUTOSPIN_BUTTON_BACKGRAOUND_PATH), pos=(380, 650), 
+            login_button = Button(image=pygame.image.load(settings.AUTOSPIN_BUTTON_BACKGRAOUND_PATH).convert_alpha(),
+                                pos=(380, 650), 
                                 text_input="Login",
                                 font=pygame.font.Font(settings.FONT_PATH, 20), base_color="#d7fcd4", hovering_color="White")
-            go_back_button = Button(image=pygame.image.load(settings.AUTOSPIN_BUTTON_BACKGRAOUND_PATH), pos=(550, 650), 
+            go_back_button = Button(image=pygame.image.load(settings.AUTOSPIN_BUTTON_BACKGRAOUND_PATH).convert_alpha(),
+                                pos=(550, 650), 
                                 text_input="Go back",
                                 font=pygame.font.Font(settings.FONT_PATH, 20), base_color="#d7fcd4", hovering_color="White")
             font=pygame.font.Font('freesansbold.ttf', 32)
@@ -174,10 +185,12 @@ class Game:
 
             mouse_pos = pygame.mouse.get_pos()
             
-            register_button = Button(image=pygame.image.load(settings.AUTOSPIN_BUTTON_BACKGRAOUND_PATH), pos=(380, 650), 
+            register_button = Button(image=pygame.image.load(settings.AUTOSPIN_BUTTON_BACKGRAOUND_PATH).convert_alpha(),
+                                pos=(380, 650), 
                                 text_input="Register",
                                 font=pygame.font.Font(settings.FONT_PATH, 20), base_color="#d7fcd4", hovering_color="White")
-            go_back_button = Button(image=pygame.image.load(settings.AUTOSPIN_BUTTON_BACKGRAOUND_PATH), pos=(550, 650), 
+            go_back_button = Button(image=pygame.image.load(settings.AUTOSPIN_BUTTON_BACKGRAOUND_PATH).convert_alpha(),
+                                pos=(550, 650), 
                                 text_input="Go back",
                                 font=pygame.font.Font(settings.FONT_PATH, 20), base_color="#d7fcd4", hovering_color="White")
             font=pygame.font.Font('freesansbold.ttf', 32)
@@ -237,10 +250,12 @@ def run_options(self):
 
         mouse_pos = pygame.mouse.get_pos()
         
-        submit_button = Button(image=pygame.image.load(settings.AUTOSPIN_BUTTON_BACKGRAOUND_PATH), pos=(380, 650), 
+        submit_button = Button(image=pygame.image.load(settings.AUTOSPIN_BUTTON_BACKGRAOUND_PATH).convert_alpha(),
+                            pos=(380, 650), 
                             text_input="Submit",
                             font=pygame.font.Font(settings.FONT_PATH, 20), base_color="#d7fcd4", hovering_color="White")
-        go_back_button = Button(image=pygame.image.load(settings.AUTOSPIN_BUTTON_BACKGRAOUND_PATH), pos=(550, 650), 
+        go_back_button = Button(image=pygame.image.load(settings.AUTOSPIN_BUTTON_BACKGRAOUND_PATH).convert_alpha(),
+                            pos=(550, 650), 
                             text_input="Go back",
                             font=pygame.font.Font(settings.FONT_PATH, 20), base_color="#d7fcd4", hovering_color="White")
         font=pygame.font.Font('freesansbold.ttf', 32)

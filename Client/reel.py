@@ -3,14 +3,14 @@ import random
 import settings
 
 class Symbol(pygame.sprite.Sprite):
-    def __init__(self, x, y, image_path):
+    def __init__(self, x, y, image_path,symbol):
         super().__init__()
         self.image_path=image_path
         self.image = pygame.image.load(image_path).convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        
+        self.symbol=symbol
         self.width=190
         self.height=190
         self.alpha=255
@@ -54,9 +54,13 @@ class Reel:
         self.is_spinning=False
         self.is_board_full=False
         self.reel_end_sound=pygame.mixer.Sound(settings.SPIN_END_SOUND_PATH)
+        self.reel_wild_sound=pygame.mixer.Sound(settings.SPIN_WILD_SOUND_PATH)
+        self.reel_scatter_sound=pygame.mixer.Sound(settings.SPIN_SCATTER_SOUND_PATH)
         for i in range(3):
             symbol_to_spawn=random.randint(1,8)
-            self.symbol_list.add(Symbol(self.x,self.y + i*(settings.IMAGE_HEIGHT+settings.HEIGHT_OFFSET), settings.IMAGE_PATHS[symbol_to_spawn]))
+            self.symbol_list.add(
+                Symbol(self.x,self.y + i*(settings.IMAGE_HEIGHT+settings.HEIGHT_OFFSET), settings.IMAGE_PATHS[symbol_to_spawn],
+                symbol_to_spawn))
 
 
     def animate_win(self,symbol):
@@ -102,7 +106,12 @@ class Reel:
             return
 
         if not len(self.animation_sprites) and len( self.symbol_list)==3:
-            self.reel_end_sound.play()
+            if settings.SCATTER_SYMBOL in [symbol.symbol for symbol in self.symbol_list]:
+                self.reel_scatter_sound.play()
+            elif settings.WILD_SYMBOL in [symbol.symbol for symbol in self.symbol_list]:
+                self.reel_wild_sound.play()
+            else:
+                self.reel_end_sound.play()
             self.is_spinning=False
             self.re_center_symbols()
 
@@ -120,8 +129,8 @@ class Reel:
         
         self.is_spinning=True
         for symbol in symbol_list:
-            self.animation_sprites.add(Symbol(self.x,settings.ANIMATION_SYMBOL_SPAWN_HEIGHT,settings.IMAGE_PATHS[symbol]))
+            self.animation_sprites.add(Symbol(self.x,settings.ANIMATION_SYMBOL_SPAWN_HEIGHT,settings.IMAGE_PATHS[symbol],symbol))
         
         for i in range(additional_symbols):
             symbol_to_spawn=random.randint(1,8)
-            self.animation_sprites.add(Symbol(self.x,settings.ANIMATION_SYMBOL_SPAWN_HEIGHT, settings.IMAGE_PATHS[symbol_to_spawn]))
+            self.animation_sprites.add(Symbol(self.x,settings.ANIMATION_SYMBOL_SPAWN_HEIGHT, settings.IMAGE_PATHS[symbol_to_spawn],symbol_to_spawn))

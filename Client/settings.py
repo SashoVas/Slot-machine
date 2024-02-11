@@ -2,6 +2,8 @@ BACKGROUND_IMAGE_PATH = "Client/graphics/backgrounds/bg2.png"
 USER_INTERFACE_BACKGROUND_IMAGE_PATH = "Client/graphics/backgrounds/bg3.png"
 SPIN_START_SOUND_PATH = "Client/audio/rollstart.mp3"
 SPIN_END_SOUND_PATH = "Client/audio/rollend.mp3"
+SPIN_WILD_SOUND_PATH = "Client/audio/wild_sound.mp3"
+SPIN_SCATTER_SOUND_PATH = "Client/audio/scatter_sound.mp3"
 WIN_SOUND_PATH = "Client/audio/mainwinsound.mp3"
 BIG_WIN_SOUND_PATH="Client/audio/big_win_sound.mp3"
 OMEGA_WIN_SOUND_PATH="Client/audio/azis_omega_win_sound.mp3"
@@ -37,3 +39,5 @@ IMAGE_PATHS = {
     7: "Client/graphics/symbols/seven.png",
     8: "Client/graphics/symbols/crown.png",
 }
+WILD_SYMBOL = 7
+SCATTER_SYMBOL=8
