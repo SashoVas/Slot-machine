@@ -38,6 +38,15 @@ class User:
         self.bet_amount=amount
 
 
+    def get_user_statistics(self):
+        if self.is_loged_in==False:
+            return -1
+
+        response=requests.get(settings.STATISTICS_ENDPOINT_URL,headers={"Authorization":self.get_authorization_header()})
+        json_data= response.json()
+        return json_data
+
+
     def deposit(self,amount):
         if self.is_loged_in==False:
             return 0

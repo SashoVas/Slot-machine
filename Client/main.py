@@ -101,10 +101,13 @@ class Game:
                         self.run_register()
                     if login_options_button.checkForInput(mouse_pos) and self.user.is_logged():
                         running=False
-                        run_options(self)
+                        self.run_options(self)
                     if quit_button.checkForInput(mouse_pos):
                         pygame.quit()
                         quit()
+                    if register_statistics_button.checkForInput(mouse_pos) and self.user.is_logged():
+                        running=False
+                        self.run_statistics()
 
             pygame.display.update()
             self.clock.tick(settings.FPS)
@@ -240,77 +243,116 @@ class Game:
             self.clock.tick(settings.FPS)
 
 
-def run_options(self):
-    running =True
-    bet_amount="100"
-    deposit=""
-    bet_amount_ready=False
-    while running:
-        self.screen.fill((0,0,0))
+    def run_options(self):
+        running =True
+        bet_amount="100"
+        deposit=""
+        bet_amount_ready=False
+        while running:
+            self.screen.fill((0,0,0))
 
-        mouse_pos = pygame.mouse.get_pos()
-        
-        submit_button = Button(image=pygame.image.load(settings.AUTOSPIN_BUTTON_BACKGRAOUND_PATH).convert_alpha(),
-                            pos=(380, 650), 
-                            text_input="Submit",
-                            font=pygame.font.Font(settings.FONT_PATH, 20), base_color="#d7fcd4", hovering_color="White")
-        go_back_button = Button(image=pygame.image.load(settings.AUTOSPIN_BUTTON_BACKGRAOUND_PATH).convert_alpha(),
-                            pos=(550, 650), 
-                            text_input="Go back",
-                            font=pygame.font.Font(settings.FONT_PATH, 20), base_color="#d7fcd4", hovering_color="White")
-        font=pygame.font.Font('freesansbold.ttf', 32)
-        bet_amount_input=font.render(f"Bet amount:{bet_amount}",True,(255,255,255))
-        deposit_input=font.render(f"Deposit:{deposit}",True,(255,255,255))
-        self.screen.blit(bet_amount_input,(30,200))
-        self.screen.blit(deposit_input,(30,300))
+            mouse_pos = pygame.mouse.get_pos()
+            
+            submit_button = Button(image=pygame.image.load(settings.AUTOSPIN_BUTTON_BACKGRAOUND_PATH).convert_alpha(),
+                                pos=(380, 650), 
+                                text_input="Submit",
+                                font=pygame.font.Font(settings.FONT_PATH, 20), base_color="#d7fcd4", hovering_color="White")
+            go_back_button = Button(image=pygame.image.load(settings.AUTOSPIN_BUTTON_BACKGRAOUND_PATH).convert_alpha(),
+                                pos=(550, 650), 
+                                text_input="Go back",
+                                font=pygame.font.Font(settings.FONT_PATH, 20), base_color="#d7fcd4", hovering_color="White")
+            font=pygame.font.Font('freesansbold.ttf', 32)
+            bet_amount_input=font.render(f"Bet amount:{bet_amount}",True,(255,255,255))
+            deposit_input=font.render(f"Deposit:{deposit}",True,(255,255,255))
+            self.screen.blit(bet_amount_input,(30,200))
+            self.screen.blit(deposit_input,(30,300))
 
-        for button in [submit_button, go_back_button]:
-            button.changeColor(mouse_pos)
-            button.update(self.screen)
+            for button in [submit_button, go_back_button]:
+                button.changeColor(mouse_pos)
+                button.update(self.screen)
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
-            if event.type == pygame.TEXTINPUT:
-                if not event.text.isdigit() and not event.text==".":
-                    continue
-                if bet_amount_ready:
-                    deposit+=event.text
-                else:
-                    bet_amount+=event.text
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_BACKSPACE:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+                if event.type == pygame.TEXTINPUT:
+                    if not event.text.isdigit() and not event.text==".":
+                        continue
                     if bet_amount_ready:
-                        deposit=deposit[:-1]
+                        deposit+=event.text
                     else:
-                        bet_amount=bet_amount[:-1]
-                if event.key == pygame.K_RETURN:
-                    if bet_amount_ready:
+                        bet_amount+=event.text
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_BACKSPACE:
+                        if bet_amount_ready:
+                            deposit=deposit[:-1]
+                        else:
+                            bet_amount=bet_amount[:-1]
+                    if event.key == pygame.K_RETURN:
+                        if bet_amount_ready:
+                            if bet_amount!='' and float(bet_amount)>0:
+                                self.user.change_bet_amount(float(bet_amount))
+                            if deposit != '' and float(deposit)>0:
+                                self.user.deposit(float(deposit))
+                            running=False
+                            self.run_menu()
+                        else:
+                            bet_amount_ready=True
+                    if event.key == pygame.K_TAB:
+                        bet_amount_ready=not bet_amount_ready
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if submit_button.checkForInput(mouse_pos):
                         if bet_amount!='' and float(bet_amount)>0:
                             self.user.change_bet_amount(float(bet_amount))
                         if deposit != '' and float(deposit)>0:
                             self.user.deposit(float(deposit))
                         running=False
                         self.run_menu()
-                    else:
-                        bet_amount_ready=True
-                if event.key == pygame.K_TAB:
-                    bet_amount_ready=not bet_amount_ready
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if submit_button.checkForInput(mouse_pos):
-                    if bet_amount!='' and float(bet_amount)>0:
-                        self.user.change_bet_amount(float(bet_amount))
-                    if deposit != '' and float(deposit)>0:
-                        self.user.deposit(float(deposit))
-                    running=False
-                    self.run_menu()
-                if go_back_button.checkForInput(mouse_pos):
-                    running=False
-                    self.run_menu()
+                    if go_back_button.checkForInput(mouse_pos):
+                        running=False
+                        self.run_menu()
 
-        pygame.display.update()
-        self.clock.tick(settings.FPS)
+            pygame.display.update()
+            self.clock.tick(settings.FPS)
+
+
+    def run_statistics(self):
+        running =True
+        statistics=self.user.get_user_statistics()
+        
+        while running:
+            self.screen.fill((0,0,0))
+
+            mouse_pos = pygame.mouse.get_pos()
+            
+            go_back_button = Button(image=pygame.image.load(settings.AUTOSPIN_BUTTON_BACKGRAOUND_PATH).convert_alpha(),
+                                pos=(700, 650), 
+                                text_input="Go back",
+                                font=pygame.font.Font(settings.FONT_PATH, 20), base_color="#d7fcd4", hovering_color="White")
+            font=pygame.font.Font('freesansbold.ttf', 32)
+            statistic_screen_name=font.render(f"Statistics",True,(255,255,255))
+            self.screen.blit(statistic_screen_name,(480,10))
+
+
+            for current,(key,value) in enumerate(statistics.items()):
+                self.screen.blit(font.render(f"{key}:{value}",True,(255,255,255)),(current,40*current+50))
+
+            for button in [ go_back_button]:
+                button.changeColor(mouse_pos)
+                button.update(self.screen)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if go_back_button.checkForInput(mouse_pos):
+                        running=False
+                        self.run_menu()
+
+            pygame.display.update()
+            self.clock.tick(settings.FPS)
+
 
 if __name__ == "__main__":
     game = Game()
