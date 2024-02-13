@@ -38,6 +38,13 @@ class User:
         self.bet_amount=amount
 
 
+    def get_leader_board(self,criteria='profit'):
+        response=requests.get(settings.LEADERBOARD_ENDPOINT_URL+"/"+criteria,headers={"Authorization":self.get_authorization_header()})
+        json_data=response.json()
+        print(json_data)
+        return json_data
+
+
     def get_user_statistics(self):
         if self.is_loged_in==False:
             return -1

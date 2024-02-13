@@ -13,6 +13,7 @@ from rest_framework.permissions import IsAuthenticated
 from machine import slot_machine_settings
 from machine.slot_machine import Slot_machine
 from statistics import stdev
+from django.db.models import Sum, Avg, Max, Count, Prefetch
 # Create your views here.
 
 
@@ -167,3 +168,19 @@ def spin_machine(request):
         request.user.save()
         return Response(serializer.data)
     return Response(serializer.errors)
+
+
+@api_view(["GET"])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_leaderboard(request,criteria):
+    rolls = (Roll.objects.prefetch_related('user')
+            .values("user__username")
+            .annotate(
+                profit=Sum("winings_multyplier")*Avg("cost")-Sum("cost"),
+                max_multyplyer=Max("winings_multyplier"),
+                amounth_bet=Sum("cost"),
+                amounth_won=Sum("winings_multyplier")*Avg("cost")
+                ).order_by(f"-{criteria}"))[:10]
+
+    return Response(rolls)
