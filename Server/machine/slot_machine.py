@@ -22,22 +22,23 @@ class Slot_machine:
             ]
 
     def calculate_streek_for_one_line(self, line):
-        current_symbol = self.reels[0].result[line[0]]
+        current_symbol = self.reels[0].get_result()[line[0]]
         streek = 0
         wilds_count = 0
 
         for reel, line_row in zip(self.reels, line):
-            if (not reel.result[line_row] == current_symbol
+            reel_result=reel.get_result()
+            if (not reel_result[line_row] == current_symbol
                 and not current_symbol == slot_machine_settings.WILD_SYMBOL
-                and not reel.result[line_row] == slot_machine_settings.WILD_SYMBOL):
+                and not reel_result[line_row] == slot_machine_settings.WILD_SYMBOL):
                 break
             
-            if reel.result[line_row] == slot_machine_settings.SCATTER_SYMBOL:
+            if reel_result[line_row] == slot_machine_settings.SCATTER_SYMBOL:
                 break
 
             streek += 1
-            if reel.result[line_row]!=slot_machine_settings.WILD_SYMBOL:
-                current_symbol = reel.result[line_row]
+            if reel_result[line_row]!=slot_machine_settings.WILD_SYMBOL:
+                current_symbol = reel_result[line_row]
             elif current_symbol == slot_machine_settings.WILD_SYMBOL:
                 wilds_count+=1
 
@@ -54,7 +55,7 @@ class Slot_machine:
         scater_positions = []
         for reel in self.reels:
             scater_positions.append(-1)
-            for positions,symbol in enumerate(reel.result):
+            for positions,symbol in enumerate(reel.get_result()):
                 if symbol == slot_machine_settings.SCATTER_SYMBOL:
                     scater_count += 1
                     scater_positions[-1] = positions
@@ -83,7 +84,7 @@ class Slot_machine:
         scater_multyplier, scater_positions = self.calculate_scater_multyplyer()
         multyplier += scater_multyplier
 
-        return multyplier, [reel.result for reel in self.reels], winning_lines, scater_multyplier, scater_positions
+        return multyplier, [reel.get_result() for reel in self.reels], winning_lines, scater_multyplier, scater_positions
 
 
 class Reel:
@@ -92,6 +93,11 @@ class Reel:
         self.is_rigged = is_rigged
         self.rigged_reels_symbols = rigged_reels_symbols
         self.result = None
+
+
+    def get_result(self):
+        return self.result
+
 
     def spin(self):
         if self.is_rigged:

@@ -13,7 +13,7 @@ from rest_framework.permissions import IsAuthenticated
 from machine import slot_machine_settings
 from machine.slot_machine import Slot_machine
 from statistics import stdev
-from django.db.models import Sum, Avg, Max, Count, Prefetch
+from django.db.models import Sum, Avg, Max
 # Create your views here.
 
 
