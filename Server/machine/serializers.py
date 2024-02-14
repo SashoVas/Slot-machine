@@ -10,4 +10,4 @@ class UserSerializer(serializers.ModelSerializer):
 class RollSerializer(serializers.ModelSerializer):
     class Meta:
         model = Roll
-        fields = ["id", "cost", "time", "user","board_info","winings_multyplier", "result"]
+        fields = ["id", "cost", "time", "user","board_info","winings_multyplier", "result","scatter_multiplier"]
