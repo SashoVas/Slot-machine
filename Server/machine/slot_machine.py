@@ -11,8 +11,8 @@ class Slot_machine:
         if self.is_rigged:
             self.reels = [
                 Reel(slot_machine_settings.BASE_REELS_SYMBOLS[i],
-                    is_rigged=is_rigged,
-                    rigged_reels_symbols=rigged_reels_symbols[i])
+                     is_rigged=is_rigged,
+                     rigged_reels_symbols=rigged_reels_symbols[i])
                 for i in range(Slot_machine.REELS_NUMBER)
             ]
         else:
@@ -27,56 +27,55 @@ class Slot_machine:
         wilds_count = 0
 
         for reel, line_row in zip(self.reels, line):
-            reel_result=reel.get_result()
+            reel_result = reel.get_result()
             if (not reel_result[line_row] == current_symbol
                 and not current_symbol == slot_machine_settings.WILD_SYMBOL
-                and not reel_result[line_row] == slot_machine_settings.WILD_SYMBOL):
+                    and not reel_result[line_row] == slot_machine_settings.WILD_SYMBOL):
                 break
-            
+
             if reel_result[line_row] == slot_machine_settings.SCATTER_SYMBOL:
                 break
 
             streek += 1
-            if reel_result[line_row]!=slot_machine_settings.WILD_SYMBOL:
+            if reel_result[line_row] != slot_machine_settings.WILD_SYMBOL:
                 current_symbol = reel_result[line_row]
             elif current_symbol == slot_machine_settings.WILD_SYMBOL:
-                wilds_count+=1
+                wilds_count += 1
 
-        if streek>0:
-            streek-=1
-        if wilds_count>0:
-            wilds_count-=1
+        if streek > 0:
+            streek -= 1
+        if wilds_count > 0:
+            wilds_count -= 1
 
         return streek, current_symbol, wilds_count
-
 
     def calculate_scater_multyplyer(self):
         scater_count = 0
         scater_positions = []
         for reel in self.reels:
             scater_positions.append(-1)
-            for positions,symbol in enumerate(reel.get_result()):
+            for positions, symbol in enumerate(reel.get_result()):
                 if symbol == slot_machine_settings.SCATTER_SYMBOL:
                     scater_count += 1
                     scater_positions[-1] = positions
 
-        if scater_count>0:
-            scater_count-=1
+        if scater_count > 0:
+            scater_count -= 1
 
-        return slot_machine_settings.PAYTABLE[slot_machine_settings.SCATTER_SYMBOL][scater_count],scater_positions
-
+        return slot_machine_settings.PAYTABLE[slot_machine_settings.SCATTER_SYMBOL][scater_count], scater_positions
 
     def roll_machine(self):
         for reel in self.reels:
             reel.spin()
 
         multyplier = 0
-        winning_lines=[]
+        winning_lines = []
 
         for line in slot_machine_settings.WINNING_LINES:
-            streak, symbol, wilds_count = self.calculate_streek_for_one_line(line)
- 
-            multyplier +=max( slot_machine_settings.PAYTABLE[symbol][streak],
+            streak, symbol, wilds_count = self.calculate_streek_for_one_line(
+                line)
+
+            multyplier += max(slot_machine_settings.PAYTABLE[symbol][streak],
                               slot_machine_settings.PAYTABLE[slot_machine_settings.WILD_SYMBOL][wilds_count])
             if streak > 1:
                 winning_lines.append(line)
@@ -94,10 +93,8 @@ class Reel:
         self.rigged_reels_symbols = rigged_reels_symbols
         self.result = None
 
-
     def get_result(self):
         return self.result
-
 
     def spin(self):
         if self.is_rigged:

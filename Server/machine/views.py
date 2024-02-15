@@ -5,8 +5,8 @@ from rest_framework.decorators import (
     permission_classes,
     authentication_classes,
 )
-from machine.models import User,Roll
-from machine.serializers import UserSerializer,RollSerializer
+from machine.models import User, Roll
+from machine.serializers import UserSerializer, RollSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -41,7 +41,7 @@ def user_info(request):
 def login_user(request):
     user = get_object_or_404(User, username=request.data["username"])
     if not user.check_password(request.data["password"]):
-        return Response({"error": "Wrong password"},status=400)
+        return Response({"error": "Wrong password"}, status=400)
     token, created = Token.objects.get_or_create(user=user)
     serializer = UserSerializer(user)
     return Response(
@@ -68,7 +68,7 @@ def register_user(request):
         user.set_password(request.data["password"])
         user.save()
         return Response(serializer.data)
-    return Response(serializer.errors,status=400)
+    return Response(serializer.errors, status=400)
 
 
 @api_view(["GET"])
@@ -79,48 +79,51 @@ def get_user_history(request):
     serializer = RollSerializer(rolls, many=True)
     return Response(serializer.data)
 
+
 @api_view(["GET"])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def get_user_statistics(request):
     rolls = Roll.objects.filter(user=request.user)
-    total_amoounth_won=sum([roll.result for roll in rolls])
-    total_amount_bet=sum([roll.cost for roll in rolls])
-    max_amount_won=max([roll.result for roll in rolls])
-    max_amount_bet=max([roll.cost for roll in rolls])
+    total_amoounth_won = sum([roll.result for roll in rolls])
+    total_amount_bet = sum([roll.cost for roll in rolls])
+    max_amount_won = max([roll.result for roll in rolls])
+    max_amount_bet = max([roll.cost for roll in rolls])
     max_multiplyer = max([roll.winings_multyplier for roll in rolls])
-    total_spins=len(rolls)
-    average_multiplyer=sum([roll.winings_multyplier for roll in rolls])/total_spins
+    total_spins = len(rolls)
+    average_multiplyer = sum(
+        [roll.winings_multyplier for roll in rolls])/total_spins
 
-    profit=total_amoounth_won-total_amount_bet
-    amount_won_per_spin=total_amoounth_won/total_spins
-    average_bet=total_amount_bet/total_spins
+    profit = total_amoounth_won-total_amount_bet
+    amount_won_per_spin = total_amoounth_won/total_spins
+    average_bet = total_amount_bet/total_spins
 
-    std_won=stdev([roll.result for roll in rolls])
-    std_bet=stdev([roll.cost for roll in rolls])
-    std_multiplyer=stdev([roll.winings_multyplier for roll in rolls])
+    std_won = stdev([roll.result for roll in rolls])
+    std_bet = stdev([roll.cost for roll in rolls])
+    std_multiplyer = stdev([roll.winings_multyplier for roll in rolls])
     return Response(data={
-        "total_spins":total_spins,
-        "total_amoounth_won":total_amoounth_won,
-        "max_amount_won":max_amount_won,
-        "amount_won_per_spin":amount_won_per_spin,
-        "std_won":std_won,
-        "total_amount_bet":total_amount_bet,
-        "max_amount_bet":max_amount_bet,
-        "average_bet":average_bet,
-        "std_bet":std_bet,
-        "profit":profit,
-        "max_multiplyer":max_multiplyer,
-        "average_multiplyer":average_multiplyer,
-        "std_multiplyer":std_multiplyer,
+        "total_spins": total_spins,
+        "total_amoounth_won": total_amoounth_won,
+        "max_amount_won": max_amount_won,
+        "amount_won_per_spin": amount_won_per_spin,
+        "std_won": std_won,
+        "total_amount_bet": total_amount_bet,
+        "max_amount_bet": max_amount_bet,
+        "average_bet": average_bet,
+        "std_bet": std_bet,
+        "profit": profit,
+        "max_multiplyer": max_multiplyer,
+        "average_multiplyer": average_multiplyer,
+        "std_multiplyer": std_multiplyer,
     })
+
 
 @api_view(["GET"])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def get_user_roll(request,pk):
+def get_user_roll(request, pk):
     roll = get_object_or_404(Roll, pk=pk)
-    if  not roll.user == request.user:
+    if not roll.user == request.user:
         return Response({"error": "You don't have permission to see this roll"})
     serializer = RollSerializer(roll)
     return Response(serializer.data)
@@ -132,7 +135,7 @@ def get_user_roll(request,pk):
 def add_money(request):
     if float(request.data["amount"]) <= 0:
         return Response({"error": "Invalid amount"})
-    request.user.balance +=float( request.data["amount"])
+    request.user.balance += float(request.data["amount"])
     request.user.save()
     return Response({"balance": request.user.balance})
 
@@ -146,25 +149,26 @@ def spin_machine(request):
     if float(request.data["cost"]) <= 0:
         return Response({"error": "Invalid bet"})
 
-    slot_machine=Slot_machine()
-    multyplier, roll_board, winning_lines, scater_multyplier, scater_positions=slot_machine.roll_machine()
-    board_info={"roll_board":roll_board,
-                "winning_lines":winning_lines,
-                "scater_positions":scater_positions}
+    slot_machine = Slot_machine()
+    multyplier, roll_board, winning_lines, scater_multyplier, scater_positions = slot_machine.roll_machine()
+    board_info = {"roll_board": roll_board,
+                  "winning_lines": winning_lines,
+                  "scater_positions": scater_positions}
 
     data = {
-        'user':request.user.pk,
-        'cost':request.data["cost"],
-        'board_info':board_info,
-        'winings_multyplier':multyplier,
-        'scatter_multiplier':scater_multyplier,
+        'user': request.user.pk,
+        'cost': request.data["cost"],
+        'board_info': board_info,
+        'winings_multyplier': multyplier,
+        'scatter_multiplier': scater_multyplier,
     }
-    serializer=RollSerializer(data=data)
+    serializer = RollSerializer(data=data)
 
     if serializer.is_valid():
         serializer.save()
-        
-        request.user.balance += float(request.data["cost"])*multyplier - float(request.data["cost"])
+
+        request.user.balance += float(request.data["cost"]) * \
+            multyplier - float(request.data["cost"])
         request.user.save()
         return Response(serializer.data)
     return Response(serializer.errors)
@@ -173,14 +177,14 @@ def spin_machine(request):
 @api_view(["GET"])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def get_leaderboard(request,criteria):
+def get_leaderboard(request, criteria):
     rolls = (Roll.objects.prefetch_related('user')
-            .values("user__username")
-            .annotate(
-                profit=Sum("winings_multyplier")*Avg("cost")-Sum("cost"),
-                max_multyplyer=Max("winings_multyplier"),
-                amounth_bet=Sum("cost"),
-                amounth_won=Sum("winings_multyplier")*Avg("cost")
-                ).order_by(f"-{criteria}"))[:10]
+             .values("user__username")
+             .annotate(
+        profit=Sum("winings_multyplier")*Avg("cost")-Sum("cost"),
+        max_multyplyer=Max("winings_multyplier"),
+        amounth_bet=Sum("cost"),
+        amounth_won=Sum("winings_multyplier")*Avg("cost")
+    ).order_by(f"-{criteria}"))[:10]
 
     return Response(rolls)
