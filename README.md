@@ -67,3 +67,4 @@ Make sure you have Python and Django installed on your machine before starting t
 * Django
 * Django REST API
 * Pygame
+* requests

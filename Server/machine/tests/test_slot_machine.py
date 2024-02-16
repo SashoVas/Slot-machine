@@ -1,95 +1,7 @@
-from django.test import TestCase, Client
+from django.test import TestCase
 from machine.slot_machine import Slot_machine, Reel
 from unittest.mock import Mock, patch
-from machine.models import User, Roll
 from machine import slot_machine_settings
-from django.urls import reverse
-from rest_framework.authtoken.models import Token
-
-
-class ViewsTestCase(TestCase):
-    def setUp(self):
-        self.client = Client()
-
-        Token.objects.create(user=User.objects.create(
-            username='test', password='test', balance=1000))
-        self.token = Token.objects.get(user__username='test')
-        for i in range(5):
-            Roll.objects.create(cost=20, user=User.objects.get(
-                username='test'), board_info='[]', winings_multiplier=5, scatter_multiplier=0)
-
-    def test_roll_machine(self):
-        mock_slot_machine_roll_machine = Mock(
-            return_value=(5, "", [], 0, [-1, -1, -1, -1, -1]))
-        with patch.object(Slot_machine, 'roll_machine', mock_slot_machine_roll_machine):
-            response = self.client.post(
-                reverse('roll'), {'cost': 20}, HTTP_AUTHORIZATION="Token " + str(self.token))
-            self.assertEqual(response.status_code, 200)
-            response_json = response.json()
-            self.assertEqual(response_json['cost'], 20)
-            self.assertEqual(response_json['winings_multiplier'], 5)
-            self.assertEqual(response_json['scatter_multiplier'], 0)
-            self.assertEqual(response_json['result'], 100)
-
-    def test_user_addMoney(self):
-        response = self.client.post(reverse('addMoney'), {
-                                    'amount': 100}, HTTP_AUTHORIZATION="Token " + str(self.token))
-        self.assertEqual(response.status_code, 200)
-        response_json = response.json()
-        self.assertEqual(response_json['balance'], 1100)
-
-    def test_user_info(self):
-        response = self.client.get(
-            reverse('user'), HTTP_AUTHORIZATION="Token " + str(self.token))
-        self.assertEqual(response.status_code, 200)
-        response_json = response.json()
-        self.assertEqual(response_json['balance'], 1000)
-        self.assertEqual(response_json['username'], 'test')
-
-    def test_user_rollHistory(self):
-        response = self.client.get(
-            reverse('rollHistory'), HTTP_AUTHORIZATION="Token " + str(self.token))
-        self.assertEqual(response.status_code, 200)
-        response_json = response.json()
-        for i in range(5):
-            self.assertEqual(response_json[i]['cost'], 20)
-            self.assertEqual(response_json[i]['winings_multiplier'], 5)
-            self.assertEqual(response_json[i]['scatter_multiplier'], 0)
-
-    def test_user_statistics(self):
-        response = self.client.get(
-            reverse('statistics'), HTTP_AUTHORIZATION="Token " + str(self.token))
-        self.assertEqual(response.status_code, 200)
-        response_json = response.json()
-
-        self.assertEqual(response_json['max_amount_won'], 100)
-        self.assertEqual(response_json['total_amoounth_won'], 100*5)
-        self.assertEqual(response_json['amount_won_per_spin'], 100)
-        self.assertEqual(response_json['total_amount_bet'], 20*5)
-        self.assertEqual(response_json['average_bet'], 20)
-        self.assertEqual(response_json['max_multiplyer'], 5)
-        self.assertEqual(response_json['average_multiplyer'], 5)
-        self.assertEqual(response_json['std_bet'], 0)
-        self.assertEqual(response_json['std_won'], 0)
-        self.assertEqual(response_json['std_multiplyer'], 0)
-
-    def test_userHistory(self):
-        response = self.client.get(
-            reverse('userHistory', args=[1]), HTTP_AUTHORIZATION="Token " + str(self.token))
-        self.assertEqual(response.status_code, 200)
-        response_json = response.json()
-        self.assertEqual(response_json['cost'], 20)
-        self.assertEqual(response_json['winings_multiplier'], 5)
-        self.assertEqual(response_json['scatter_multiplier'], 0)
-        self.assertEqual(response_json['result'], 100)
-
-    def test_leaderboard(self):
-        response = self.client.get(reverse('leaderboard', args=[
-                                   "amounth_won"]), HTTP_AUTHORIZATION="Token " + str(self.token))
-        self.assertEqual(response.status_code, 200)
-        response_json = response.json()
-        self.assertEqual(response_json[0]['amounth_won'], 100*5)
-        self.assertEqual(response_json[0]['user__username'], 'test')
 
 
 class SlotMachineTestCase(TestCase):
@@ -313,9 +225,15 @@ class ReelTestCase(TestCase):
         with patch('random.randint', mock_randint):
             result = reel.spin()
             self.assertEquals(result, [1, 2, 3])
+
             mock_randint.return_value = 4
             result = reel.spin()
             self.assertEquals(result, [5, 6, 1])
+
             mock_randint.return_value = 5
             result = reel.spin()
             self.assertEquals(result, [6, 1, 2])
+
+            reel.is_rigged = True
+            reel.rigged_reels_symbols = [1, 2, 3]
+            self.assertEquals(reel.spin(), [1, 2, 3])

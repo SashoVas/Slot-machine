@@ -94,6 +94,8 @@ class Reel:
         self.result = None
 
     def get_result(self):
+        if self.is_rigged:
+            return self.rigged_reels_symbols
         return self.result
 
     def spin(self):

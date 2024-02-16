@@ -14,4 +14,5 @@ urlpatterns = [
     path("history/<int:pk>", views.get_user_roll, name="userHistory"),
     path("statistics", views.get_user_statistics, name="statistics"),
     path("leaderboard/<str:criteria>", views.get_leaderboard, name="leaderboard"),
+    path("rigged_roll", views.spin_machine_rigged, name="riggedRoll"),
 ]
