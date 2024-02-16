@@ -45,12 +45,14 @@ class Game:
             button.changeColor(mouse_pos)
             button.update(self.screen)
 
-    def handle_user_input_events(self,  username, password, username_redy, login_button, go_back_button, running, mouse_pos, submit_func):
+    def handle_input_events(self,  username, password, username_redy, submit_button, go_back_button, running, mouse_pos, submit_func, check_is_digit=False):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
             if event.type == pygame.TEXTINPUT:
+                if check_is_digit and (not event.text.isdigit() and not event.text == "."):
+                    continue
                 if username_redy:
                     password += event.text
                 else:
@@ -71,7 +73,7 @@ class Game:
                 if event.key == pygame.K_TAB:
                     username_redy = not username_redy
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if login_button.checkForInput(mouse_pos):
+                if submit_button.checkForInput(mouse_pos):
                     if submit_func(username, password):
                         running = False
                         self.run_menu()
@@ -183,7 +185,7 @@ class Game:
             self.blit_text_input("username", "password", username, password)
             self.update_buttons([login_button, go_back_button], mouse_pos)
 
-            username, password, username_redy, running = self.handle_user_input_events(
+            username, password, username_redy, running = self.handle_input_events(
                 username, password, username_redy, login_button, go_back_button, running, mouse_pos, self.user.login)
 
             pygame.display.update()
@@ -203,11 +205,18 @@ class Game:
             self.blit_text_input("username", "password", username, password)
             self.update_buttons([register_button, go_back_button], mouse_pos)
 
-            username, password, username_redy, running = self.handle_user_input_events(
+            username, password, username_redy, running = self.handle_input_events(
                 username, password, username_redy, register_button, go_back_button, running, mouse_pos, self.user.register)
 
             pygame.display.update()
             self.clock.tick(settings.FPS)
+
+    def handle_options_input(self, bet_amount, deposit):
+        if bet_amount != '' and float(bet_amount) > 0:
+            self.user.change_bet_amount(float(bet_amount))
+        if deposit != '' and float(deposit) > 0:
+            self.user.deposit(float(deposit))
+        return True
 
     def run_options(self):
         running = True
@@ -222,47 +231,9 @@ class Game:
                 'Submit', 'Go back')
             self.blit_text_input("Bet amount", "Deposit", bet_amount, deposit)
             self.update_buttons([submit_button, go_back_button], mouse_pos)
-
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    quit()
-                if event.type == pygame.TEXTINPUT:
-                    if not event.text.isdigit() and not event.text == ".":
-                        continue
-                    if bet_amount_ready:
-                        deposit += event.text
-                    else:
-                        bet_amount += event.text
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_BACKSPACE:
-                        if bet_amount_ready:
-                            deposit = deposit[:-1]
-                        else:
-                            bet_amount = bet_amount[:-1]
-                    if event.key == pygame.K_RETURN:
-                        if bet_amount_ready:
-                            if bet_amount != '' and float(bet_amount) > 0:
-                                self.user.change_bet_amount(float(bet_amount))
-                            if deposit != '' and float(deposit) > 0:
-                                self.user.deposit(float(deposit))
-                            running = False
-                            self.run_menu()
-                        else:
-                            bet_amount_ready = True
-                    if event.key == pygame.K_TAB:
-                        bet_amount_ready = not bet_amount_ready
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if submit_button.checkForInput(mouse_pos):
-                        if bet_amount != '' and float(bet_amount) > 0:
-                            self.user.change_bet_amount(float(bet_amount))
-                        if deposit != '' and float(deposit) > 0:
-                            self.user.deposit(float(deposit))
-                        running = False
-                        self.run_menu()
-                    if go_back_button.checkForInput(mouse_pos):
-                        running = False
-                        self.run_menu()
+            bet_amount, deposit, bet_amount_ready, running = self.handle_input_events(
+                bet_amount, deposit, bet_amount_ready, submit_button, go_back_button, running,
+                mouse_pos, self.handle_options_input, True)
 
             pygame.display.update()
             self.clock.tick(settings.FPS)
