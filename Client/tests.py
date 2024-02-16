@@ -4,12 +4,13 @@ from reel import Reel
 from slot_machine import SlotMachine
 from user import User
 import pygame
+pygame.init()
+pygame.display.set_mode((1, 1))
 
 
 class ReelTestCase(unittest.TestCase):
     def test_spin(self):
-        pygame.mixer.init()
-        pygame.display.set_mode((800, 600))
+
         reel1 = Reel(0, 0)
         reel1.spin([1, 2, 3], 3)
         self.assertEqual(reel1.is_spinning, True)
@@ -20,8 +21,7 @@ class ReelTestCase(unittest.TestCase):
 
 class SlotMachineTestCase(unittest.TestCase):
     def test_spin(self):
-        pygame.mixer.init()
-        pygame.display.set_mode((800, 600))
+
         mock_get_spin_result = Mock(return_value=({'roll_board': [[1, 2, 3], [1, 2, 3], [
                                     1, 2, 3], [1, 2, 3], [1, 2, 3]], 'winning_lines': []}, 10, 200))
         mock_reel_spin = Mock(return_value=True)
@@ -36,3 +36,7 @@ class SlotMachineTestCase(unittest.TestCase):
             self.assertEqual(fake_user.balance, 980)
             self.assertEqual(slot_machine.result_of_spin, 200)
             self.assertEqual(slot_machine.to_vizualize_winnings, True)
+
+
+if __name__ == '__main__':
+    unittest.main()
