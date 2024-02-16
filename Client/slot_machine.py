@@ -20,7 +20,7 @@ class SlotMachine:
         self.omega_win_sound = pygame.mixer.Sound(
             settings.OMEGA_WIN_SOUND_PATH)
         self.last_win_animation_time = 0
-        self.winnings_multyplier = 0
+        self.winnings_multiplier = 0
         self.initialize_reels()
         self.visualize_multipliyer = False
         self.is_auto_spin = False
@@ -67,9 +67,9 @@ class SlotMachine:
             self.user.balance += self.result_of_spin
             if self.result_of_spin:
                 self.visualize_multipliyer = True
-                if self.winnings_multyplier > settings.OMEGA_WIN_MULTIPLIER:
+                if self.winnings_multiplier > settings.OMEGA_WIN_MULTIPLIER:
                     self.omega_win_sound.play()
-                elif self.winnings_multyplier > settings.BIG_WIN_MULTIPLIER:
+                elif self.winnings_multiplier > settings.BIG_WIN_MULTIPLIER:
                     self.big_win_sound.play()
                 else:
                     self.win_sound.play()
@@ -87,7 +87,7 @@ class SlotMachine:
             font2 = pygame.font.Font('freesansbold.ttf', 50)
 
             img2 = font2.render(
-                f"WIN: X {self.winnings_multyplier}", True, (255, 255, 255))
+                f"WIN: X {self.winnings_multiplier}", True, (255, 255, 255))
             self.display_surface.blit(img2, (400, settings.SCREEN_HEIGHT+15))
 
     def get_spin_result(self, amount):
@@ -95,7 +95,7 @@ class SlotMachine:
                                  "Authorization": self.user.get_authorization_header()}, data={"cost": amount})
 
         json_data = response.json()
-        return json_data["board_info"], json_data["winings_multyplier"], json_data["result"]
+        return json_data["board_info"], json_data["winings_multiplier"], json_data["result"]
 
     def spin(self, amount):
         amount = amount
@@ -109,9 +109,9 @@ class SlotMachine:
         self.start_spin_sound.play()
 
         self.user.balance -= amount
-        board_info, winings_multyplier, result = self.get_spin_result(amount)
+        board_info, winings_multiplier, result = self.get_spin_result(amount)
         self.result_of_spin = result
-        self.winnings_multyplier = winings_multyplier
+        self.winnings_multiplier = winings_multiplier
         board = board_info["roll_board"]
         self.winning_lines = board_info["winning_lines"]
         self.to_vizualize_winnings = True

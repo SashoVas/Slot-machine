@@ -89,10 +89,10 @@ def get_user_statistics(request):
     total_amount_bet = sum([roll.cost for roll in rolls])
     max_amount_won = max([roll.result for roll in rolls])
     max_amount_bet = max([roll.cost for roll in rolls])
-    max_multiplyer = max([roll.winings_multyplier for roll in rolls])
+    max_multiplyer = max([roll.winings_multiplier for roll in rolls])
     total_spins = len(rolls)
     average_multiplyer = sum(
-        [roll.winings_multyplier for roll in rolls])/total_spins
+        [roll.winings_multiplier for roll in rolls])/total_spins
 
     profit = total_amoounth_won-total_amount_bet
     amount_won_per_spin = total_amoounth_won/total_spins
@@ -100,7 +100,7 @@ def get_user_statistics(request):
 
     std_won = stdev([roll.result for roll in rolls])
     std_bet = stdev([roll.cost for roll in rolls])
-    std_multiplyer = stdev([roll.winings_multyplier for roll in rolls])
+    std_multiplyer = stdev([roll.winings_multiplier for roll in rolls])
     return Response(data={
         "total_spins": total_spins,
         "total_amoounth_won": total_amoounth_won,
@@ -150,7 +150,7 @@ def spin_machine(request):
         return Response({"error": "Invalid bet"})
 
     slot_machine = Slot_machine()
-    multyplier, roll_board, winning_lines, scater_multyplier, scater_positions = slot_machine.roll_machine()
+    multiplier, roll_board, winning_lines, scater_multiplier, scater_positions = slot_machine.roll_machine()
     board_info = {"roll_board": roll_board,
                   "winning_lines": winning_lines,
                   "scater_positions": scater_positions}
@@ -159,8 +159,8 @@ def spin_machine(request):
         'user': request.user.pk,
         'cost': request.data["cost"],
         'board_info': board_info,
-        'winings_multyplier': multyplier,
-        'scatter_multiplier': scater_multyplier,
+        'winings_multiplier': multiplier,
+        'scatter_multiplier': scater_multiplier,
     }
     serializer = RollSerializer(data=data)
 
@@ -168,7 +168,7 @@ def spin_machine(request):
         serializer.save()
 
         request.user.balance += float(request.data["cost"]) * \
-            multyplier - float(request.data["cost"])
+            multiplier - float(request.data["cost"])
         request.user.save()
         return Response(serializer.data)
     return Response(serializer.errors)
@@ -181,10 +181,10 @@ def get_leaderboard(request, criteria):
     rolls = (Roll.objects.prefetch_related('user')
              .values("user__username")
              .annotate(
-        profit=Sum("winings_multyplier")*Avg("cost")-Sum("cost"),
-        max_multyplyer=Max("winings_multyplier"),
+        profit=Sum("winings_multiplier")*Avg("cost")-Sum("cost"),
+        max_multyplyer=Max("winings_multiplier"),
         amounth_bet=Sum("cost"),
-        amounth_won=Sum("winings_multyplier")*Avg("cost")
+        amounth_won=Sum("winings_multiplier")*Avg("cost")
     ).order_by(f"-{criteria}"))[:10]
 
     return Response(rolls)

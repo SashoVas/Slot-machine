@@ -40,7 +40,6 @@ class User:
         response = requests.get(settings.LEADERBOARD_ENDPOINT_URL+"/"+criteria,
                                 headers={"Authorization": self.get_authorization_header()})
         json_data = response.json()
-        print(json_data)
         return json_data
 
     def get_user_statistics(self):

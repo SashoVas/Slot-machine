@@ -68,22 +68,22 @@ class Slot_machine:
         for reel in self.reels:
             reel.spin()
 
-        multyplier = 0
+        multiplier = 0
         winning_lines = []
 
         for line in slot_machine_settings.WINNING_LINES:
             streak, symbol, wilds_count = self.calculate_streek_for_one_line(
                 line)
 
-            multyplier += max(slot_machine_settings.PAYTABLE[symbol][streak],
+            multiplier += max(slot_machine_settings.PAYTABLE[symbol][streak],
                               slot_machine_settings.PAYTABLE[slot_machine_settings.WILD_SYMBOL][wilds_count])
             if streak > 1:
                 winning_lines.append(line)
 
-        scater_multyplier, scater_positions = self.calculate_scater_multyplyer()
-        multyplier += scater_multyplier
+        scater_multiplier, scater_positions = self.calculate_scater_multyplyer()
+        multiplier += scater_multiplier
 
-        return multyplier, [reel.get_result() for reel in self.reels], winning_lines, scater_multyplier, scater_positions
+        return multiplier, [reel.get_result() for reel in self.reels], winning_lines, scater_multiplier, scater_positions
 
 
 class Reel:

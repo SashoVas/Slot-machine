@@ -16,7 +16,7 @@ class ViewsTestCase(TestCase):
         self.token = Token.objects.get(user__username='test')
         for i in range(5):
             Roll.objects.create(cost=20, user=User.objects.get(
-                username='test'), board_info='[]', winings_multyplier=5, scatter_multiplier=0)
+                username='test'), board_info='[]', winings_multiplier=5, scatter_multiplier=0)
 
     def test_roll_machine(self):
         mock_slot_machine_roll_machine = Mock(
@@ -27,7 +27,7 @@ class ViewsTestCase(TestCase):
             self.assertEqual(response.status_code, 200)
             response_json = response.json()
             self.assertEqual(response_json['cost'], 20)
-            self.assertEqual(response_json['winings_multyplier'], 5)
+            self.assertEqual(response_json['winings_multiplier'], 5)
             self.assertEqual(response_json['scatter_multiplier'], 0)
             self.assertEqual(response_json['result'], 100)
 
@@ -53,7 +53,7 @@ class ViewsTestCase(TestCase):
         response_json = response.json()
         for i in range(5):
             self.assertEqual(response_json[i]['cost'], 20)
-            self.assertEqual(response_json[i]['winings_multyplier'], 5)
+            self.assertEqual(response_json[i]['winings_multiplier'], 5)
             self.assertEqual(response_json[i]['scatter_multiplier'], 0)
 
     def test_user_statistics(self):
@@ -79,7 +79,7 @@ class ViewsTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         response_json = response.json()
         self.assertEqual(response_json['cost'], 20)
-        self.assertEqual(response_json['winings_multyplier'], 5)
+        self.assertEqual(response_json['winings_multiplier'], 5)
         self.assertEqual(response_json['scatter_multiplier'], 0)
         self.assertEqual(response_json['result'], 100)
 
