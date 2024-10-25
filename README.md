@@ -6,13 +6,13 @@ Bringing the sizzle of '20 Super Hot' to life with Django REST API: a dynamic an
 
 ### Introduction
 
-The project aims to develop a captivating and entertaining slot machine game inspired by the popular casino game "20 Super Hot" Leveraging the appeal and mechanics of the original game, our objective is to create an engaging digital experience that captivates players with its vibrant visuals, exciting gameplay, and potential for lucrative rewards.
+The project aims to develop a captivating and entertaining slot machine game inspired by the popular casino game "20 Super Hot" Leveraging the appeal and mechanics of the original game, our objective is to create an engaging digital experience that captivates players with its vibrant visuals, exciting game play, and potential for lucrative rewards.
 
 ### Technical details
 
-This project is implementation of Slot machine using Django REST API at the server side, for handaling all the logic.
-For the client side i am using pygame for all the vizualization and animations.
-The project is simulatoin of the famous slot machine casino game "20 Super Hot".
+This project is implementation of Slot machine using Django REST API at the server side, for handling all the logic.
+For the client side i am using Pygame for all the visualization and animations.
+The project is simulation of the famous slot machine casino game "20 Super Hot".
 
 The project implement the following functionalities:
 
@@ -21,10 +21,10 @@ The project implement the following functionalities:
 * Depositing money to account
 * History of user spins
 * Statistics of user history
-* Getting the leaderboard of users in the system (ordared by profit, bigest win, etc)
-* Spining the slot machine
+* Getting the leaderboard of users in the system (ordered by profit, biggest win, etc)
+* Spinning the slot machine
 * Auto spin the slot machine
-* Changeing the bet amount
+* Changing the bet amount
 * Cool animations and audio
   
 ## Project preview
